@@ -19,9 +19,10 @@ export class App extends Component {
     const prevPage = prevState.page;
     const currentPage = this.state.page;
     const currentSearch = this.state.search;
-    if (prevSearch !== currentSearch) {
-      this.setState({ page: 1 });
-    }
+    // if (prevSearch !== currentSearch) {
+    //   this.setState({ page: 1 });
+    //   this.setState({ images: [] });
+    // }
     if (prevSearch !== currentSearch || prevPage !== currentPage) {
       this.setState({ status: 'pending' });
       fetchImages(currentSearch, currentPage).then(resp => {
@@ -33,7 +34,9 @@ export class App extends Component {
     }
   }
   handleSubmit = search => {
-    this.setState({ search });
+    if (this.state.search !== search) {
+      this.setState({ page: 1, images: [], search });
+    }
   };
   handleClick = () => {
     this.setState(prevState => ({ page: prevState.page + 1 }));
@@ -52,8 +55,10 @@ export class App extends Component {
     return (
       <div>
         <Searchbar onSubmit={this.handleSubmit} />
-        {/* {images.length && <ImageGallery images={images} />} */}
-        <ImageGallery clickImg={this.clickImg} images={images} />
+
+        {images.length !== 0 && (
+          <ImageGallery clickImg={this.clickImg} images={images} />
+        )}
         {status === 'pending' && <Loader />}
         {status !== 'pending' && status !== 'idle' && (
           <Button onClick={this.handleClick} />
